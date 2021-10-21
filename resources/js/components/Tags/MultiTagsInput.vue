@@ -2,6 +2,7 @@
     <tags-input
       :tags="tags"
       :type="type"
+      :subdomain-id="subdomainId"
       :suggestion-limit="suggestionLimit"
       @input="handleInput"
     >
@@ -44,7 +45,7 @@
 import TagsInput from './TagsInput.vue';
 
 export default {
-    props: ['name', 'tags', 'type', 'suggestionLimit', 'errors'],
+    props: ['name', 'tags', 'type', 'subdomainId', 'suggestionLimit', 'errors'],
 
     model: {
         prop: 'tags',

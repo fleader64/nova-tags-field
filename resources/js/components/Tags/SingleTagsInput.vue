@@ -22,7 +22,7 @@
 
 <script>
 export default {
-    props: ['tags', 'type', 'name', 'suggestionLimit', 'errors'],
+    props: ['tags', 'type', 'subdomainId', 'name', 'suggestionLimit', 'errors'],
 
     model: {
         prop: 'tags',
@@ -39,7 +39,11 @@ export default {
 
     methods: {
         getAvailableTags() {
-            const queryString = this.type ? `filter[type]=${this.type}` : '';
+            let queryString = this.type ? `filter[type]=${this.type}` : '';
+
+            if (this.subdomainId) {
+                queryString += `&filter[subdomainId]=${this.subdomainId}`;
+            }
 
             window.axios
                 .get(`/nova-vendor/spatie/nova-tags-field?${queryString}`)

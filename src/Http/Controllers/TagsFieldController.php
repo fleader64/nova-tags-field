@@ -15,7 +15,7 @@ class TagsFieldController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Tag::query();
+        $query = resolve(config('tags.tag_model', Tag::class))->query();
 
         if ($request->has('filter.containing')) {
             $query->containing($request['filter']['containing']);
@@ -23,6 +23,10 @@ class TagsFieldController extends Controller
 
         if ($request->has('filter.type')) {
             $query->where('type', $request['filter']['type']);
+        }
+
+        if ($request->has('filter.subdomainId')) {
+            $query->where('subdomain_id', $request['filter']['subdomainId']);
         }
 
         if ($request->has('limit')) {

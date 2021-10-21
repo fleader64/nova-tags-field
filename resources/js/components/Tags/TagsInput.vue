@@ -3,6 +3,7 @@ export default {
     props: {
         tags: { required: true },
         type: { default: null },
+        subdomainId: { default: null },
         suggestionLimit: { required: true },
         removeOnBackspace: { default: true },
     },
@@ -76,6 +77,10 @@ export default {
 
             if (this.type) {
                 queryString += `&filter[type]=${this.type}`;
+            }
+
+            if (this.subdomainId) {
+                queryString += `&filter[subdomainId]=${this.subdomainId}`;
             }
 
             window.axios.get(`/nova-vendor/spatie/nova-tags-field${queryString}`).then(response => {
