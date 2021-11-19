@@ -25,6 +25,10 @@ class TagsFieldController extends Controller
             $query->where('type', $request['filter']['type']);
         }
 
+        if ($request->has('filter.subdomainId')) {
+            $query->where('subdomain_id', $request['filter']['subdomainId']);
+        }
+
         if ($request->has('limit')) {
             $query->limit($request['limit']);
         }
@@ -33,8 +37,22 @@ class TagsFieldController extends Controller
             return strtolower($tag->name);
         })->values();
 
-        return $sorted->map(function (Tag $tag) {
+        $suggested = $sorted->map(function (Tag $tag) {
             return $tag->name;
         });
+
+        if(config('tags.enable_permanent_suggestions')){
+            $permanentSuggestions = collect(config('tags.permanent_suggestions_list', []));
+
+            $suggested = $suggested->reject(function($tagName) use($permanentSuggestions) {
+                return $permanentSuggestions->contains($tagName);
+            });
+
+            foreach($permanentSuggestions->sort()->reverse() as $s){
+                $suggested->prepend($s);
+            }
+        }
+
+        return $suggested;
     }
 }

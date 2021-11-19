@@ -5,6 +5,7 @@
                 :is="component"
                 :name="field.attribute"
                 :type="field.type"
+                :subdomain-id="field.subdomainId"
                 :suggestion-limit="field.suggestionLimit"
                 :limit="field.limit"
                 :errors="errors"

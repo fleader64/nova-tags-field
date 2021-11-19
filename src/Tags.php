@@ -2,6 +2,7 @@
 
 namespace Spatie\TagsField;
 
+use Bouncer;
 use Illuminate\Support\Arr;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -22,6 +23,11 @@ class Tags extends Field
     public function type(string $type)
     {
         return $this->withMeta(['type' => $type]);
+    }
+
+    public function subdomainId(int $subdomainId = null)
+    {
+        return $this->withMeta(['subdomainId' => $subdomainId]);
     }
 
     public function withLinkToTagResource(string $tagResource = null, string $class = 'no-underline dim text-primary font-bold')
@@ -115,13 +121,23 @@ class Tags extends Field
         $class = get_class($model);
 
         $class::saved(function ($model) use ($tagNames) {
+            $initScope = Bouncer::scope()->get();
+            Bouncer::scope()->to($model->subdomain_id);
+
             $model->syncTagsWithType($tagNames, $this->meta()['type'] ?? null);
+
+            Bouncer::scope()->to($initScope);
         });
     }
 
     public function resolveAttribute($resource, $attribute = null)
     {
+        $initScope = Bouncer::scope()->get();
+        Bouncer::scope()->to($resource->subdomain_id);
+
         $tags = $resource->tags;
+
+        Bouncer::scope()->to($initScope);
 
         if (Arr::has($this->meta(), 'type')) {
             $tags = $tags->where('type', $this->meta()['type']);
